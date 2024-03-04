@@ -1,0 +1,11 @@
+typeCustomers;   DNICIF;                  IdVehicle;   IdVehicleExternal;   NumberPlate;   TypeVehicle;     Brand;        Model;         Color;            SerialNumber;     
+P;               12345678A;               xAbC12;      abc123XYZ;           ABC123;        Sedan;         Toyota;       Corolla;        White;           XYZ987654321
+B;              23456789C;               pQrS34;      def456UVW;           DEF456;        SUV;           Ford;         Explorer;       Black;           UVW123456789
+B;              54321098E;               tUvW56;      ghi789LMN;           GHI789;        Truck;         Chevrolet;    Silverado;      Red;             LMN987654321
+P;               76543210D;               xYzA78;      jkl012OPQ;           JKL012;        Motorcycle;    Harley;       Davidson;       Blue;            OPQ987654321
+B;              98765432B;               mNoP90;      mno345RST;           MNO345;        Hatchback;     Honda;        Civic;          Green;           RST987654321
+
+
+
+
+

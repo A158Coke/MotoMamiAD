@@ -1,0 +1,7 @@
+FechaParte;    DNI;      Description;                Daños;          IdExternal;     VehicleID   
+2023/10/19;   12345678A;  impacto;                     2;            BBVA000001;     1
+2023-2-19;   23456789C;   Choque con un moto;          3;            BBVA000002;     2
+2023/1/19;   54321098E;  Caida a un rio;               1;            BBVA000003;      3
+2023/10/19;  76543210D;  Choque con otro vehiculo;     2;            BBVA000004;      4
+2023/10/19;  98765432B;  Caida de una montaña;         1;            BBVA000005;       5
+2023/10/19;  98765432C;  Caida de una despeñaperro;         1;            BBVA000005;       5

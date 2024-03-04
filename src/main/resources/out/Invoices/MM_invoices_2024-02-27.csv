@@ -1,0 +1,19 @@
+Factura
+
+Nº: 1
+Fecha: 2024-02-27
+
+Datos de la Empresa:
+Nombre: Motomami S.A.
+CIF: A12345678
+Dirección: Calle Joan Maragall, 13, Palma de Mallorca, 07008
+
+Datos del Proveedor:
+Nombre: BBVA
+Costos:
+Asegurados: 5 personas
+Coste unitario: 20,30 €
+Coste total sin IVA: 101,50
+IVA (21%): 21 €
+
+Total a Pagar: 122,82 €
