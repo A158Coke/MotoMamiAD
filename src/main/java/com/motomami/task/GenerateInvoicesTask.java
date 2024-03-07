@@ -16,5 +16,6 @@ public class GenerateInvoicesTask {
     @Scheduled(cron = "${cron.task.schedule.GenerateInvoicesTask}") // dia1 cada mes lo ejecurta
     public void executeTask() {
         pService.generateProviderInvoice(Constantes.C_SOURCE_INVOICE);
+        System.out.println("Ejecuto GET TASK generate invoice task");
     }
 }

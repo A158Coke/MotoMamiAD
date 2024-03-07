@@ -12,12 +12,9 @@ public class GetVehicletask {
 
     @Scheduled(cron = "${cron.task.schedule.GetTask}") // Cada dia
     public void task() {
-        // readFileInfo("");
         try {
-            // pService.readFileInfo(Constantes.C_SOURCE_PARTS);
-            // pService.readFileInfo(Constantes.C_SOURCE_CUSTUMERS);
             pService.readFileInfo(Constantes.C_SOURCE_VEHICLES);
-            System.out.println("Ejecuto");
+            System.out.println("Ejecuto GET TASK read Info Vehicle task");
         } catch (Exception e) {
             e.getStackTrace();
         }

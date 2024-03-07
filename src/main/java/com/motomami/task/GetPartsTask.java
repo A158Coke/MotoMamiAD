@@ -30,8 +30,7 @@ public class GetPartsTask {
     public void task() {
         try {
             pService.readFileInfo(Constantes.C_SOURCE_PARTS);
-            // pService.readFileInfo(Constantes.C_SOURCE_CUSTUMERS);
-            System.out.println("Ejecuto");
+            System.out.println("Ejecuto GET TASK read Info Part task");
         } catch (Exception e) {
             e.getStackTrace();
         }

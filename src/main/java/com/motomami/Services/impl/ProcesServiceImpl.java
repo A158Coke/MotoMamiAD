@@ -77,11 +77,12 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // EntryPoint de generate invoice
     @Override
     public void generateProviderInvoice(String source) {
         try {
             if (source.equals(Constantes.C_SOURCE_INVOICE)) {
-                System.out.println("🚧 Estoy dentro del if en generateProviderInvoice");
+                System.out.println("Estoy dentro del if en generateProviderInvoice");
                 generateInvoice();
             }
         } catch (Exception e) {
@@ -89,6 +90,7 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Generar el instancia de Clase Factura
     private void generateInvoice() {
         ArrayList<InvoiceDto> invoices = null;
         for (String provider : Constantes.providers) {
@@ -110,38 +112,39 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Escribir los datos al fichero de factura
     private void writeInvoiceFile(InvoiceDto invoice) throws IOException {
         String absolutePath = outFilesPath + "/Invoices/";
-        FileWriter fw = new FileWriter(absolutePath + "MM_invoices_" + invoice.getInvoiceDate() + ".csv");
+        FileWriter fw = new FileWriter(absolutePath + "MM_invoices_" + invoice.getInvoiceDate() + ".csv", true);
         BufferedWriter bw = new BufferedWriter(fw);
         double totalWithOutTax = invoice.getPeopleQuantity() * invoice.getUnitPrice();
         double totalWithTax = totalWithOutTax + (totalWithOutTax * invoice.getTax() / 100);
-        String invoiceStruct = "Factura\n\n"
-                + "Nº: " + invoice.getInvoiceNum() + "\n"
-                + "Fecha: " + invoice.getInvoiceDate() + "\n\n"
+        String invoiceStruct = "\nFactura\n\n"
+                + "Nº: " + invoice.getInvoiceNum() + ",\n"
+                + "Fecha: " + invoice.getInvoiceDate() + ",\n\n"
                 + "Datos de la Empresa:\n"
-                + "Nombre: " + Constantes.COMPANY + "\n"
-                + "CIF: " + Constantes.CIF + "\n"
-                + "Dirección: " + Constantes.COMPANY_ADDRESS + "\n\n"
+                + "Nombre: " + Constantes.COMPANY + ",\n"
+                + "CIF: " + Constantes.CIF + ",\n"
+                + "Dirección: " + Constantes.COMPANY_ADDRESS + ",\n\n"
                 + "Datos del Proveedor:\n"
-                + "Nombre: " + invoice.getProviderName() + "\n"
-                + "Costos:\n"
-                + "Asegurados: " + invoice.getPeopleQuantity() + " personas\n"
-                + "Coste unitario: " + String.format("%.2f", invoice.getUnitPrice()) + " €\n"
-                + "Coste total sin IVA: " + String.format("%.2f", totalWithOutTax) + "\n"
-                + "IVA (21%): " + invoice.getTax() + " €\n\n"
-                + "Total a Pagar: " + String.format("%.2f", totalWithTax) + " €";
+                + "Nombre: " + invoice.getProviderName() + ",\n"
+                + "Costos:,\n"
+                + "Asegurados: " + invoice.getPeopleQuantity() + " personas,\n"
+                + "Coste unitario: " + String.format("%.2f", invoice.getUnitPrice()) + " €,\n"
+                + "Coste total sin IVA: " + String.format("%.2f", totalWithOutTax) + ",\n"
+                + "IVA (21%): " + invoice.getTax() + " €,\n\n"
+                + "Total a Pagar: " + String.format("%.2f", totalWithTax) + " €\n\n";
         bw.write(invoiceStruct);
         bw.flush();
         bw.close();
         System.out.println("Escritura de la factura con exito");
     }
 
+    // Devuelve el listado de Factura
     private ArrayList<InvoiceDto> getDataInvoiceToDB(String provider) throws SQLException {
         ArrayList<InvoiceDto> invoices = null;
         try (Connection con = DriverManager.getConnection(DBUrl, DBUser,
                 DBPassword);) {
-
             String query = "SELECT * FROM mm_invoice WHERE provider_name = ?";
             invoices = new ArrayList<>();
             InvoiceDto invoiceDto = new InvoiceDto();
@@ -183,6 +186,7 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Devuelve el numero total de customer de cada Provider
     private int getTotalPeopleByProvider(String provider) throws SQLException {
         int totalPeople = 0;
         PreparedStatement ps = null;
@@ -476,10 +480,9 @@ public class ProcesServiceImpl implements ProcesService {
     }
 
     // Si existe fichero json al tabla INT. Customer
-    public static boolean existInfoJsonCustomer(String p_json) {
+    public boolean existInfoJsonCustomer(String p_json) {
         // MotoMami es el nombre de base de datos
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             if (connection == null) {
                 System.err.println("Connection failed");
                 return false;
@@ -519,10 +522,9 @@ public class ProcesServiceImpl implements ProcesService {
     }
 
     // Si existe el id external al tabla Customer
-    public static boolean existCustomer(String idExternal) {
+    public boolean existCustomer(String idExternal) {
         // MotoMami es el nombre de base de datos
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             if (connection == null) {
                 System.err.println("Connection failed");
                 return false;
@@ -562,10 +564,9 @@ public class ProcesServiceImpl implements ProcesService {
     }
 
     // Si existe fichero json al tabla INT. Vehicle
-    public static boolean existJsonVehicle(String p_json) {
+    public boolean existJsonVehicle(String p_json) {
         // MotoMami es el nombre de base de datos
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             if (connection == null) {
                 System.err.println("Connection failed");
                 return false;
@@ -605,10 +606,9 @@ public class ProcesServiceImpl implements ProcesService {
     }
 
     // Si existe id external al tabla INT. Vehicle
-    public static boolean existInfoVehicle(String idExterna) {
+    public boolean existInfoVehicle(String idExterna) {
         // MotoMami es el nombre de base de datos
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             if (connection == null) {
                 System.err.println("Connection failed");
                 return false;
@@ -648,10 +648,9 @@ public class ProcesServiceImpl implements ProcesService {
     }
 
     // Si existe fichero json al tabla INT. Parts
-    public static boolean existJsonParts(String p_json) {
+    public boolean existJsonParts(String p_json) {
         // MotoMami es el nombre de base de datos
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             if (connection == null) {
                 System.err.println("Connection failed");
                 return false;
@@ -691,10 +690,9 @@ public class ProcesServiceImpl implements ProcesService {
     }
 
     // Si existe id External al tabla INT. Parts
-    public static boolean existInfoParts(String idExternal) {
+    public boolean existInfoParts(String idExternal) {
         // MotoMami es el nombre de base de datos
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             if (connection == null) {
                 System.err.println("Connection failed");
                 return false;
@@ -733,11 +731,11 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Insertar los datos de ficheto .dat al database interface Parts
     private void insertPartIntoDatabase(String provider, String targetStream, java.sql.Date sqlDate,
             String idExternal, String operation, ArrayList<PartDto> listPartDtos) throws SQLException, IOException {
         String PreparedStatementSQL = "INSERT INTO mm_interfaceparts (id_pre, contentJson, creation_date, last_update_date, created_by, updated_by, estatus, operacion, id_externa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             PreparedStatement ps = connection.prepareStatement(PreparedStatementSQL);
             ps.setString(1, provider);
             ps.setString(2, targetStream);
@@ -754,11 +752,11 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Insertar los datos de ficheto .dat al database interface Customers
     private void insertCustomerIntoDatabase(String provider, String targetStream, java.sql.Date sqlDate,
             String idExternal, String operation) throws SQLException, IOException {
         String PreparedStatementSQL = "INSERT INTO MM_InterfaceCustomers (id_pre, contentJson, creation_date, last_update_date, created_by, updated_by, estatus, id_externa, operacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             PreparedStatement ps = connection.prepareStatement(PreparedStatementSQL);
             ps.setString(1, provider);
             ps.setString(2, targetStream);
@@ -775,6 +773,7 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Insertar los datos de ficheto .dat al database interface Vehicles
     private void insertVehicleIntoDatabase(String provider, String targetStream, java.sql.Date sqlDate,
             String idVehicleExternal, String operation) throws SQLException, IOException {
         String PreparedStatementSQL = "INSERT INTO mm_interfacevehicles (id_pre, contentJson, creation_date, last_update_date, created_by, updated_by, estatus, operacion, id_externa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -794,6 +793,7 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Procesar el Contentjson e insertar el contentJson(Int table) to customer //
     public void procesarCustomers() {
         try (Connection conn = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             ArrayList<CustumerDto> listCustomers = getCustomerInfoWithStatus("N".toUpperCase());
@@ -821,6 +821,7 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Procesar el Contentjson e insertar el contentJson(Int table) to Vehicle table
     public void procesarVehicles() {
         try (Connection conn = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             ArrayList<VehicleDto> listVehicles = getVehicleInfoWithStatus("N".toUpperCase());
@@ -844,13 +845,13 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
+    // Procesar el Contentjson e insertar el contentJson(Int table) to Parts table
     public void procesarParts() {
         try (Connection conn = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             ArrayList<PartDto> listParts = getPartsInfoWithStatus("N".toUpperCase());
             String sql = "INSERT INTO mm_part (vehicleId, identityCode, datePartExternal, descriptionPartExternal, codeDamageExternal, idExternal) VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 for (PartDto part : listParts) {
-                    // 假设 PartDto 有方法 getVehicleId() 和 getIdentityCode()
                     ps.setString(1, part.getVehicleID());
                     ps.setString(2, part.getdni());
                     ps.setDate(3, new java.sql.Date(part.getDatePartExternal().getTime()));
@@ -869,11 +870,11 @@ public class ProcesServiceImpl implements ProcesService {
         }
     }
 
-    // private ArrayList<CustomerDto> getCustomerInfoWithStatusN() throws
+    // Devuelve la listado
     public ArrayList<CustumerDto> getCustomerInfoWithStatus(String pStatus) throws SQLException {
         ArrayList<CustumerDto> customers = new ArrayList<CustumerDto>();
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MotoMami", "Program",
-                "Cide2020")) {
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser,
+                DBPassword)) {
             Gson gson = getGson();
             String query = "SELECT contentJson, operacion FROM mm_interfacecustomers WHERE estatus = ?;";
             PreparedStatement ps = null;
@@ -898,6 +899,7 @@ public class ProcesServiceImpl implements ProcesService {
         return customers;
     }
 
+    // Devuelve la listado
     public ArrayList<PartDto> getPartsInfoWithStatus(String pStatus) throws SQLException {
         ArrayList<PartDto> parts = new ArrayList<PartDto>();
         try (Connection connection = DriverManager.getConnection(DBUrl, DBUser,
@@ -926,6 +928,36 @@ public class ProcesServiceImpl implements ProcesService {
         return parts;
     }
 
+    // Devuelve la listado
+    public ArrayList<VehicleDto> getVehicleInfoWithStatus(String pStatus) {
+        ArrayList<VehicleDto> vehicles = new ArrayList<VehicleDto>();
+        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser,
+                DBPassword)) {
+            Gson gson = getGson();
+            String query = "SELECT contentJson, operacion FROM mm_interfacevehicles WHERE estatus = ?;";
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            ps = connection.prepareStatement(query);
+            ps.setString(1, pStatus);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                VehicleDto vehicle;
+                String jsonCustomer = rs.getString("contentJson");
+                String operation = rs.getString("operacion");
+                vehicle = gson.fromJson(jsonCustomer, VehicleDto.class);
+                vehicles.add(vehicle);
+            }
+        } catch (
+
+        SQLException e) {
+            System.err.println("Error executing SELECT query: " + e.getMessage());
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return vehicles;
+    }
+
+    // Devuelve el int de direccion de customer
     public int insertAddres(DireccionDto direccion) throws SQLException {
         try (Connection connection = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
             String selectQuery = "SELECT id FROM mm_address \n" +
@@ -968,33 +1000,5 @@ public class ProcesServiceImpl implements ProcesService {
                 }
             }
         }
-    }
-
-    public ArrayList<VehicleDto> getVehicleInfoWithStatus(String pStatus) {
-        ArrayList<VehicleDto> vehicles = new ArrayList<VehicleDto>();
-        try (Connection connection = DriverManager.getConnection(DBUrl, DBUser,
-                DBPassword)) {
-            Gson gson = getGson();
-            String query = "SELECT contentJson, operacion FROM mm_interfacevehicles WHERE estatus = ?;";
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            ps = connection.prepareStatement(query);
-            ps.setString(1, pStatus);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                VehicleDto vehicle;
-                String jsonCustomer = rs.getString("contentJson");
-                String operation = rs.getString("operacion");
-                vehicle = gson.fromJson(jsonCustomer, VehicleDto.class);
-                vehicles.add(vehicle);
-            }
-        } catch (
-
-        SQLException e) {
-            System.err.println("Error executing SELECT query: " + e.getMessage());
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        return vehicles;
     }
 }

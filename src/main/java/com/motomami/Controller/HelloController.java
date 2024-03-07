@@ -19,7 +19,6 @@ public class HelloController {
 
     @Autowired
     ProcesService pService;
-    // ProcesServiceImpl.readFileInfoParts(Constantes.pSource);
 
     // Localhost 8080/
     @RequestMapping("/")
@@ -88,16 +87,6 @@ public class HelloController {
     String callGenerate(@PathVariable String resource) {
         System.out.println("Valor de resouce: " + resource);
         try {
-            /*
-             * if (!resource.equals(Constantes.C_SOURCE_PARTS)
-             * && !resource.equals(Constantes.C_SOURCE_CUSTUMERS)
-             * && !resource.equals(Constantes.C_SOURCE_VEHICLES)) {
-             * System.out.println("Error msg about resoucer: " + resource);
-             * } else {
-             * pService.readFileInfo(resource);
-             * }
-             */
-
             if (Constantes.C_SOURCE_INVOICE.equalsIgnoreCase(resource)) {
                 pService.generateProviderInvoice(resource.toUpperCase());
             }

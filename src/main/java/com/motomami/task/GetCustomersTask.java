@@ -13,9 +13,8 @@ public class GetCustomersTask {
     @Scheduled(cron = "${cron.task.schedule.GetPartsTask}") // Cada dia
     public void task() {
         try {
-            // pService.readFileInfo(Constantes.C_SOURCE_PARTS);
             pService.readFileInfo(Constantes.C_SOURCE_CUSTUMERS);
-            System.out.println("Ejecuto");
+            System.out.println("Ejecuto GET TASK read Info Customer task");
         } catch (Exception e) {
             e.getStackTrace();
         }
