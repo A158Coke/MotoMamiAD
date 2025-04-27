@@ -1,0 +1,70 @@
+services:
+  motomami-kc-db:
+    image: postgres:16
+    container_name: motomami-kc-db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    ports:
+      - "5544:5432"
+    volumes:
+      - motomami_kc_db_data:/var/lib/postgresql/data
+    networks:
+      - motomami-net
+
+  motomami-pg-db:
+    image: postgres:16
+    container_name: motomami-pg-db
+    environment:
+      POSTGRES_DB: motomamiDB
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5434:5432"
+    volumes:
+      - motomami_pg_db_data:/var/lib/postgresql/data
+    networks:
+      - motomami-net
+
+  motomami-keycloak:
+    image: yuchen158/motomami:latest
+    container_name: motomami-keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://motomami-kc-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8180:8080"
+    depends_on:
+      - motomami-kc-db
+    networks:
+      - motomami-net
+
+  motomami-pgadmin:
+    image: dpage/pgadmin4:8.7
+    container_name: motomami-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gg.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - motomami-kc-db
+      - motomami-pg-db
+    volumes:
+      - motomami_pgadmin_data:/var/lib/pgadmin
+    networks:
+      - motomami-net
+volumes:
+  motomami_kc_db_data:
+  motomami_pg_db_data:
+  motomami_pgadmin_data:
+
+networks:
+  motomami-net:
+    driver: bridge

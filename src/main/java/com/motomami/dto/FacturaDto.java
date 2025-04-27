@@ -10,7 +10,7 @@ public class FacturaDto {
     private final String nombreEmpresa = "Motomami";
     private final String cif = "41256985632";
     private String direccion = "C/ Vergel, 5 Madrid, 28080";
-    private CustumerDto custumer;
+    private CustomerDto custumer;
     private Date fecha_de_registro;
     private Date fecha_de_fin_de_contrato;
     private float coste;
@@ -20,7 +20,7 @@ public class FacturaDto {
     public FacturaDto (){
 
     }
-    public FacturaDto(int id, Date fecha, String tipoSeguro, String tipoVehicle, String direccion, CustumerDto custumer, Date fecha_de_registro, Date fecha_de_fin_de_contrato, float coste, float iva) {
+    public FacturaDto(int id, Date fecha, String tipoSeguro, String tipoVehicle, String direccion, CustomerDto custumer, Date fecha_de_registro, Date fecha_de_fin_de_contrato, float coste, float iva) {
         this.id = id;
         this.fecha = fecha;
         this.tipoSeguro = tipoSeguro;
@@ -54,7 +54,7 @@ public class FacturaDto {
         this.direccion = direccion;
     }
 
-    public void setCustumer(CustumerDto custumer) {
+    public void setCustumer(CustomerDto custumer) {
         this.custumer = custumer;
     }
 
@@ -103,7 +103,7 @@ public class FacturaDto {
         return direccion;
     }
 
-    public CustumerDto getCustumer() {
+    public CustomerDto getCustumer() {
         return custumer;
     }
 

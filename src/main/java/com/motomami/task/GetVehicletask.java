@@ -5,7 +5,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import com.motomami.Services.ProcesService;
 import com.motomami.Utils.Constantes;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GetVehicletask {
     @Autowired
     ProcesService pService;

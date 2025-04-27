@@ -13,3 +13,4 @@ public class Constantes {
     public final static String CIF = "A12345678";
     public final static String COMPANY_ADDRESS = "Calle Joan Maragall, 13, Palma de Mallorca, 07008";
 }
+

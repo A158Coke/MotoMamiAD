@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"keycloak","Source":"./kc","Dir":"kc"},{"Key":"postgres","Source":"./pg","Dir":"pg"}]}

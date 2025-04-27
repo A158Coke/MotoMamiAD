@@ -1,14 +1,13 @@
 package com.motomami.Services.impl;
 
-import java.beans.Statement;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -16,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.motomami.dto.*;
 
-import org.apache.el.lang.ELArithmetic;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,10 @@ import com.motomami.Services.ProcesService;
 import com.motomami.Utils.Constantes;
 
 @Service
+@RequiredArgsConstructor
 public class ProcesServiceImpl implements ProcesService {
+    @Getter
+    private static ObjectMapper objectMapper = new ObjectMapper();
     @Value("${path.folder.outFiles}")
     private String outFilesPath;
 
@@ -55,6 +59,10 @@ public class ProcesServiceImpl implements ProcesService {
     private String DBUser;
     @Value("${databasePassword}")
     private String DBPassword;
+
+    public ProcesServiceImpl(ObjectMapper objectMapper) {
+        ProcesServiceImpl.objectMapper = objectMapper;
+    }
 
     @Override
     public void readFileInfo(String source) {
@@ -168,7 +176,7 @@ public class ProcesServiceImpl implements ProcesService {
         return invoices;
     }
 
-    // Insertar el Factura al DB
+    // Insertar el Factura al db
     private void insertDataInvoiceToDB(String provider) throws SQLException {
         int total = getTotalPeopleByProvider(provider);
         try (Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
@@ -263,13 +271,6 @@ public class ProcesServiceImpl implements ProcesService {
         return DateReturn;
     }
 
-    // Gson
-    public Gson getGson() {
-        GsonBuilder gb = new GsonBuilder().setPrettyPrinting().setDateFormat("MMM d, yyyy, hh:mm:ss a");
-        Gson gson = gb.create();
-        return gson;
-    }
-
     // Leer los Datos de Parts
     private void readFileInfoParts() {
         ArrayList<PartDto> listPartDtos = new ArrayList<>();
@@ -297,7 +298,8 @@ public class ProcesServiceImpl implements ProcesService {
                 partDto.setVehicleID(partes[5]);
                 listPartDtos.add(partDto);
 
-                String partJsonString = getGson().toJson(partDto);
+                ObjectMapper mapper = new ObjectMapper();
+                String partJsonString = mapper.writeValueAsString(partDto);
                 LocalDate today = LocalDate.now();
                 java.sql.Date sqlDate = java.sql.Date.valueOf(today);
 
@@ -337,7 +339,7 @@ public class ProcesServiceImpl implements ProcesService {
         String[] splitExtention = extencion.split(";");
         String filePath = inFilePath + "/" + splitProviders[0] + "/" + splitInsurance[0] + "." + splitExtention[0];
         System.out.println(filePath);
-        List<CustumerDto> listCustumerDtos = new ArrayList<>();
+        List<CustomerDto> listCustomerDtos = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String linea;
             int numlineas = 0;
@@ -347,18 +349,18 @@ public class ProcesServiceImpl implements ProcesService {
                     continue;
                 }
                 if (numlineas > 0) {
-                    CustumerDto custumerDto = new CustumerDto();
+                    CustomerDto customerDto = new CustomerDto();
                     linea += ";";
                     String[] customerInfo = linea.split(";");
                     String direccionfield = customerInfo[7].trim();
                     String[] dirFields = direccionfield.split(",");
-                    custumerDto.setDNI(customerInfo[0].trim());
-                    custumerDto.setNombre(customerInfo[1].trim().toUpperCase());
-                    custumerDto.setApellido1(customerInfo[2].trim().toUpperCase());
-                    custumerDto.setApellido2(customerInfo[3].trim().toUpperCase());
-                    custumerDto.setCorreo(customerInfo[4].trim().toUpperCase());
-                    custumerDto.setTelefono(customerInfo[5].trim());
-                    custumerDto.setFechaNacimiento(getDateFormatMotoMami(customerInfo[6].trim()));
+                    customerDto.setDNI(customerInfo[0].trim());
+                    customerDto.setNombre(customerInfo[1].trim().toUpperCase());
+                    customerDto.setApellido1(customerInfo[2].trim().toUpperCase());
+                    customerDto.setApellido2(customerInfo[3].trim().toUpperCase());
+                    customerDto.setCorreo(customerInfo[4].trim().toUpperCase());
+                    customerDto.setTelefono(customerInfo[5].trim());
+                    customerDto.setFechaNacimiento(getDateFormatMotoMami(customerInfo[6].trim()));
 
                     // Direccion
                     DireccionDto direccion = new DireccionDto();
@@ -367,12 +369,12 @@ public class ProcesServiceImpl implements ProcesService {
                     direccion.setCiudad(dirFields[2].trim().toUpperCase());
                     direccion.setNumero(Integer.parseInt(dirFields[3].trim()));
 
-                    custumerDto.setDireccionDto(direccion);
-                    custumerDto.setSexo(customerInfo[8].trim().toUpperCase());
-                    listCustumerDtos.add(custumerDto);
-                    System.out.println("Custumers data: " + String.valueOf(custumerDto));
+                    customerDto.setDireccionDto(direccion);
+                    customerDto.setSexo(customerInfo[8].trim().toUpperCase());
+                    listCustomerDtos.add(customerDto);
+                    System.out.println("Custumers data: " + customerDto);
 
-                    String customerJsonString = getGson().toJson(listCustumerDtos.get(0));
+                    String customerJsonString = getObjectMapper().toJson(listCustomerDtos.get(0));
                     InputStream targetStream = new ByteArrayInputStream(
                             customerJsonString.getBytes(StandardCharsets.UTF_8));
                     LocalDate today = LocalDate.now();
@@ -383,7 +385,7 @@ public class ProcesServiceImpl implements ProcesService {
                             insertCustomerIntoDatabase(splitProviders[0], customerJsonString, sqlDate,
                                     customerInfo[0].trim(),
                                     "NEW");
-                            listCustumerDtos.clear();
+                            listCustomerDtos.clear();
                         } catch (SQLException | IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -393,7 +395,7 @@ public class ProcesServiceImpl implements ProcesService {
                             insertCustomerIntoDatabase(splitProviders[0], customerJsonString, sqlDate,
                                     customerInfo[0].trim(),
                                     "UPD");
-                            listCustumerDtos.clear();
+                            listCustomerDtos.clear();
                         } catch (SQLException | IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -401,7 +403,7 @@ public class ProcesServiceImpl implements ProcesService {
                     } else {
                         // No hace nada
                         System.out.println("NO hace nada porque no hay nada nuevo");
-                        listCustumerDtos.clear();
+                        listCustomerDtos.clear();
                     }
                 }
                 numlineas++;
@@ -448,8 +450,8 @@ public class ProcesServiceImpl implements ProcesService {
                 vehicleDto.setColor(partesVehicles[8].trim().toUpperCase());
                 vehicleDto.setSerialNumber(partesVehicles[9].trim().toUpperCase());
                 listVehicleDtos.add(vehicleDto);
-                System.out.println("Vehicle data: " + String.valueOf(vehicleDto));
-                String vehicleJsonString = getGson().toJson(vehicleDto);
+                System.out.println("Vehicle data: " + vehicleDto);
+                String vehicleJsonString = getObjectMapper().writeValueAsString(vehicleDto);
                 System.out.println(vehicleJsonString);
                 LocalDate today = LocalDate.now();
                 java.sql.Date sqlDate = java.sql.Date.valueOf(today);
@@ -796,10 +798,10 @@ public class ProcesServiceImpl implements ProcesService {
     // Procesar el Contentjson e insertar el contentJson(Int table) to customer //
     public void procesarCustomers() {
         try (Connection conn = DriverManager.getConnection(DBUrl, DBUser, DBPassword)) {
-            ArrayList<CustumerDto> listCustomers = getCustomerInfoWithStatus("N".toUpperCase());
+            ArrayList<CustomerDto> listCustomers = getCustomerInfoWithStatus("N".toUpperCase());
             String sql = "INSERT INTO mm_customer (dni, nombre, apellido1, apellido2, email, fecha_nacimiento, telefono, sexo, direccionId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                for (CustumerDto customer : listCustomers) {
+                for (CustomerDto customer : listCustomers) {
                     DireccionDto direccion = customer.getDireccion();
                     int addressId = insertAddres(direccion);
                     if (addressId != -1) {
@@ -871,11 +873,11 @@ public class ProcesServiceImpl implements ProcesService {
     }
 
     // Devuelve la listado
-    public ArrayList<CustumerDto> getCustomerInfoWithStatus(String pStatus) throws SQLException {
-        ArrayList<CustumerDto> customers = new ArrayList<CustumerDto>();
+    public ArrayList<CustomerDto> getCustomerInfoWithStatus(String pStatus) throws SQLException {
+        ArrayList<CustomerDto> customers = new ArrayList<CustomerDto>();
         try (Connection connection = DriverManager.getConnection(DBUrl, DBUser,
                 DBPassword)) {
-            Gson gson = getGson();
+            Gson gson = getObjectMapper();
             String query = "SELECT contentJson, operacion FROM mm_interfacecustomers WHERE estatus = ?;";
             PreparedStatement ps = null;
             ResultSet rs = null;
@@ -883,10 +885,10 @@ public class ProcesServiceImpl implements ProcesService {
             ps.setString(1, pStatus);
             rs = ps.executeQuery();
             while (rs.next()) {
-                CustumerDto customer;
+                CustomerDto customer;
                 String jsonCustomer = rs.getString("contentJson");
                 String operation = rs.getString("operacion");
-                customer = gson.fromJson(jsonCustomer, CustumerDto.class);
+                customer = gson.fromJson(jsonCustomer, CustomerDto.class);
                 customers.add(customer);
             }
         } catch (
@@ -904,7 +906,7 @@ public class ProcesServiceImpl implements ProcesService {
         ArrayList<PartDto> parts = new ArrayList<PartDto>();
         try (Connection connection = DriverManager.getConnection(DBUrl, DBUser,
                 DBPassword)) {
-            Gson gson = getGson();
+            Gson gson = getObjectMapper();
             String query = "SELECT contentJson, operacion FROM mm_interfaceparts WHERE estatus = ?;";
             PreparedStatement ps = null;
             ResultSet rs = null;
@@ -933,7 +935,7 @@ public class ProcesServiceImpl implements ProcesService {
         ArrayList<VehicleDto> vehicles = new ArrayList<VehicleDto>();
         try (Connection connection = DriverManager.getConnection(DBUrl, DBUser,
                 DBPassword)) {
-            Gson gson = getGson();
+            Gson gson = getObjectMapper();
             String query = "SELECT contentJson, operacion FROM mm_interfacevehicles WHERE estatus = ?;";
             PreparedStatement ps = null;
             ResultSet rs = null;
@@ -980,7 +982,7 @@ public class ProcesServiceImpl implements ProcesService {
                 // Address does not exist, insert it
                 String insertQuery = "INSERT INTO mm_address (calle, numero, ciudad, codPostal) VALUES (?,?,?,?)";
                 PreparedStatement insertPs = connection.prepareStatement(insertQuery,
-                        java.sql.Statement.RETURN_GENERATED_KEYS);
+                        Statement.RETURN_GENERATED_KEYS);
                 insertPs.setString(1, direccion.getTipoVia());
                 insertPs.setInt(2, direccion.getNumero());
                 insertPs.setString(3, direccion.getCiudad());

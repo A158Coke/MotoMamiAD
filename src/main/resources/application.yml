@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/motomamiDB
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+cron:
+  task:
+    schedule:
+      get-task: "0 0 12 * * ?"
+      generate-invoices-task: "0 0 0 1 * ?"
+
+path:
+  folder:
+    out-files: src/main/resources/out
+    in-files: src/main/resources/in
+    providers: BBVA
+    parts-providers: MM_insurance_parts_20231019
+    vehicles-providers: MM_insurance_vehicle_20231116
+    customers-providers: MM_insurance_customers_2023113
+
+extension:
+  file:
+    providers: dat
