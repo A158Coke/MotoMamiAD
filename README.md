@@ -16,4 +16,7 @@ Tech Stack:
 TODO List: 
   - terraform need to do it manually, trying to find a way to automated in docker compose 
   - Still struggling with IaC and container stuff, not refactoring yet.
-  - Test framework is not implemented yet. Thinking about what framework to use.
+  - Test framework is not implemented yet. Thinking about what framework to use. first thought is Junit5.
+
+Architecture of the application: 
+    

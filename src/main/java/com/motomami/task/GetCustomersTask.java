@@ -3,8 +3,8 @@ package com.motomami.task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.motomami.Services.ProcesService;
-import com.motomami.Utils.Constantes;
+import com.motomami.service.ProcesService;
+import com.motomami.constant.Constantes;
 
 public class GetCustomersTask {
     @Autowired

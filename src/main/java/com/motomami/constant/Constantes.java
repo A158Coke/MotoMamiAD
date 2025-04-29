@@ -1,4 +1,4 @@
-package com.motomami.Utils;
+package com.motomami.constant;
 
 public class Constantes {
     public static final String C_SOURCE_PARTS = "PARTS";

@@ -1,4 +1,4 @@
-package com.motomami.Services.impl;
+package com.motomami.service.impl;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -25,8 +25,8 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.motomami.Services.ProcesService;
-import com.motomami.Utils.Constantes;
+import com.motomami.service.ProcesService;
+import com.motomami.constant.Constantes;
 
 @Service
 @RequiredArgsConstructor

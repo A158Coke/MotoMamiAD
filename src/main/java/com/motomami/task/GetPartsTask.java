@@ -1,24 +1,11 @@
 package com.motomami.task;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.crypto.Data;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.motomami.Services.ProcesService;
-import com.motomami.Utils.Constantes;
-import com.motomami.dto.PartDto;
+import com.motomami.service.ProcesService;
+import com.motomami.constant.Constantes;
 
 @Component
 public class GetPartsTask {

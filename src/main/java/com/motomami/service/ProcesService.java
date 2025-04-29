@@ -1,4 +1,4 @@
-package com.motomami.Services;
+package com.motomami.service;
 
 import org.springframework.stereotype.Service;
 
